@@ -1,7 +1,8 @@
 ---
 title: "data.table in R"
+subtitle: 'Vortrag für die R User Nürnberg'
 author: "Janek Thomas"
-date: "17. Januar 2016"
+date: "20. Januar 2016"
 output: ioslides_presentation
 ---
 
@@ -13,7 +14,7 @@ output: ioslides_presentation
     * [Munich datageeks](http://munich-datageeks.de/)
     * [Applied R Munich](http://lmu-applied-r.github.io/)
 - Slides unter:
-    * 
+    * https://github.com/ja-thomas/data.table_talk
 <br>
 <br>
 <br>
@@ -277,12 +278,100 @@ Die zwei wichtigsten Funktionen für uns sind `melt` und `dcast`
 
 <br>
 <br>
-*wide format* -> *long format* : `melt`
+*wide* -> *long* : `melt`
 
-*long format* -> *wide format* : `dcast`
-
-
+*long* -> *wide* : `dcast`
 
 
+##`reshape2`: `melt`
+
+```{r}
+wd <- data.frame(person = 1:3, 
+                 gewicht = round(runif(3, min = 60, max = 90)),
+                 groesse = round(runif(3, min = 160, max = 190)))
+wd
+                 
+```
+`wd` ist im *wide* Format!
+
+##`reshape2`: `melt`
+
+```{r}
+wd_long <- melt(wd, id = "person")
+wd_long
+```
+
+Die Spalte *variable* kann auch mit `variable.name =` direkt anders benannt werden.
+
+##`reshape2`: `dcast`
+
+```{r}
+wd_wide <- dcast(wd_long, person ~ variable)
+wd_wide
+
+all.equal(wd_wide, wd)
+```
 
 
+Sowohl `melt` als auch `dcast` können mit mehreren Faktoren umgehen.
+
+##`reshape2` für *data.table*
+
+Was sollte jetzt dieser Exkurs?
+
+`melt` und `dcast` sind ebenfalls in *data.table* implementiert!
+ 
+_Achtung_: `reshape` aus *base* R liefert immer einen *data.frame* zurück!
+
+
+## JOINing *data.tables*
+
+JOIN          | *data.frame*               | *data.table*       | 
+------------- | -------------------------- | ------------------ |
+INNER         | `merge(X, Y, all = FALSE)` | `X[Y, nomatch = 0]`|
+LEFT OUTER    | `merge(X, Y, all.x = TRUE)`| `Y[X]`             |
+RIGHT OUTER   | `merge(X, Y, all.y = TRUE)`| `X[Y]`             |
+FULL OUTER    | `merge(X, Y, all = TRUE)`  |  -                 |
+
+<br>
+`merge()` Funktioniert auch für *data.table* 
+
+(nötig z.B. bei FULL OUTER JOIN)
+
+
+## Zusammenfassung
+
+- Zeilen filtern in *i*
+    - Für schnelles filtern *key* setzen
+- In *j* können berechnungen ausgeführt werden
+    - Immer in `.()` einpacken
+    - Standard *data.frame* Syntax funktioniert nur mit `with = FALSE`
+- Gruppieren mit *by*
+    - Wieder in `.()` einpacken
+    - Auch hier können Funktionen ausgewertet werden
+- Variablen mit `:=` definieren/ändern/löschen
+    - Achtung vor *call by reference*
+- `melt` und `dcast` statt `reshape` verwenden
+- JOINS können über kurze Syntax geschrieben werden
+
+
+
+
+## Resourcen
+- https://cran.r-project.org/web/packages/data.table/
+- Vignetten: [1](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro-vignette.html), [2](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-keys-fast-subset.html), [3](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-reference-semantics.html), [4](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-reshape.html)
+- [Cheat Sheet](https://s3.amazonaws.com/assets.datacamp.com/img/blog/data+table+cheat+sheet.pdf)
+- Video Kurs auf https://www.datacamp.com/
+    - Nur erste Einheit kostenlos :(
+    - Beispiele aus diesem Talk sind von hier!
+- Talk von Matt Dowle auf der UseR2014
+    - [klick](http://user2014.stat.ucla.edu/files/tutorial_Matt.pdf)
+
+## Alternativen
+
+- `dplyr`: Verwendet chaining Syntax `%>%`
+    - https://github.com/lmu-applied-r/2015-dplyr (von Applied R München)
+- ...
+- Kaffee trinken
+- ...
+- Vorschläge?    
