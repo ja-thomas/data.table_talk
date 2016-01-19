@@ -1,0 +1,288 @@
+---
+title: "data.table in R"
+author: "Janek Thomas"
+date: "17. Januar 2016"
+output: ioslides_presentation
+---
+
+## Über mich
+
+- Statistik Student an der Ludwig-Maximilians-Universität München
+- Aktuell Masterarbeit am IMBE in Erlangen
+- Meetups: 
+    * [Munich datageeks](http://munich-datageeks.de/)
+    * [Applied R Munich](http://lmu-applied-r.github.io/)
+- Slides unter:
+    * 
+<br>
+<br>
+<br>
+   
+   
+*statistics*, *machine learning*, *R*, *boosting*, *model selection*, 
+*optimization*, *Linux*, *ensemble methods*, *parallel programming*,
+*data mining*, *support vector machines*, *visualization*, *python*, *SQL*, 
+*predictive modelling*, ...
+
+
+## *data.table*
+
+- R Paket von M Dowle, A Srinivasan, T Short, S Lianoglou, ...
+- Aktuell Version 1.9.6
+- Beschreibung:
+
+    Fast aggregation of large data (e.g. 100GB in RAM), fast ordered
+    joins, fast add/modify/delete of columns by group using
+    no copies at all, list columns and a fast file reader (fread). Offers a 
+    natural and flexible syntax, for faster development.
+
+```{r, eval=FALSE}
+install.packages("data.table")
+```
+```{r}
+library(data.table)
+```
+
+## Was ist denn überhaupt ein *data.frame*?
+
+Kann man sich sich vorstellen wie:
+
+- Eine  `matrix()` die unterschiedliche Typen haben darf (integer, character, factors, etc.)
+- Eine `list()` von Vektoren die alle die gleiche Länge haben. 
+
+
+```{r}
+data.frame(a = c(1,2,3,5), b = c("A", "B", "C", "D"))
+```
+
+## Und was kann jetzt ein *data.table*?
+
+- Effizientere Schreibweise:
+    * Weniger Funktionsaufrufe
+    * Weniger Wiederholung von Variablen Namen
+- Schnellere Berechnung:
+    * Schnelle Aggregationen
+    * Updates über Referenzierung
+- Geringerer Speicherbedarf
+- Schnelles einlesen von Datensätzen
+
+Und vielleicht das wichtigste:
+
+    Vollständig kompatibel mit jeder Operation die data.frames verwendet.
+
+
+## *data.frame*, *data.table* und *SQL*
+
+Auswahl       | *data.frame*  | *data.table*  | *SQL*
+------------- | ------------- | ------------- |------------- 
+Zeilen        | `DF[i, ]`     | `DT[i]`       | _WHERE_
+Spalten       | `DF[ , j]`    | `DT[, .(j)]`  | _SELECT_
+Gruppierung   | _???_         | `DT[by = ...]`| _GROUP BY_
+
+
+## *data.tables* allgemeine Form
+
+```{r, eval=FALSE}
+DT[i, j, by]
+```
+
+    Nehme nur die Zeilen i, dann berechne j und gruppiere nach by.
+    
+Moment mal, warum *berechne j* ? Wir wollen doch nur Spalten auswählen!
+
+```{r, eval = TRUE, results='hide'}
+data("mtcars")
+mtcarsDT <- data.table(mtcars)
+mtcarsDT[mpg > 20,
+         .(AvgHP = mean(hp),
+           "MinWT(kg)" = min(wt*453.6)),
+         by = .(cyl, under5gears = gear < 5)]
+```
+
+Implizite Berechnung neuer Variablen, später mehr dazu
+
+## Das Gelbe vom *i*
+* Zeile 1 - 3:
+    * `mtcars[1:3, ]`
+    * `mtcarsDT[1:3]`
+* Nur Autos mit 5 Gängen:
+    * `mtcars[mtcars$gear == 5, ]`
+    *  `mtcarsDT[gear == 5]`
+* Nur Autos mit 5 Gängen und mehr als 20 mpg:
+    * `mtcars[mtcars$gear == 5 & mtcars$mpg > 20, ]`
+    * `mtcarsDT[gear == 5 & mpg > 20]`
+
+* Autos mit den höchsten 10% Spritverbrauch:
+    * `mtcars[mtcars$mpg >= quantile(mtcars$mpg, 0.9), ]`
+    * `mtcarsDT[mpg >= quantile(mpg, 0.9)]`
+
+
+## *j*: mehr als nur Spalten auswählen
+
+Wenn mehr als eine Spalte ausgewählt wird, muss  `.()` verwendet werden.
+```{r, eval=FALSE}
+mtcarsDT[, .(mpg, cyl)]
+```
+
+Durch diese Schreibweise können direkt Berechnungen durchgeführt werden:
+```{r}
+mtcarsDT[, .(mean_mpg = mean(mpg), 
+             min_mpg = min(mpg),
+             max_mpg = max(mpg))]
+```
+
+## *j*: mehr als nur Spalten auswählen
+
+_Achtung_: Auswahl über Spaltennummern funktioniert nicht!
+```{r}
+mtcarsDT[, .(1)] # identisch zu mtcarsDT[, 1]
+```
+
+`data.frame` Verhalten kann mit `with = FALSE` erzwungen werden. 
+(Ist aber nicht zu empfehlen!)
+
+## *j*: mehr als nur Spalten auswählen
+_Nice to know_: Es kann (fast) jede Funktion in *j* verwendet werden
+
+```{r}
+mtcarsDT[, .(plot(mpg, hp))]
+```
+
+## Gruppierungen mit *by*
+Wieder mit `.()` verwenden.
+```{r}
+mtcarsDT[, .(mean_mpg = mean(mpg)), by = .(cyl)]
+```
+Auch in *by* können wieder Funktionen verwendet werden:
+```{r}
+mtcarsDT[, .(mean_mpg = mean(mpg)),
+             by = .(tons = round(wt * 0.4536))]
+```
+
+
+## Gruppierungen mit *by*
+_Nice to know_: Als shortcut für `nrow()` kann einfach `.N` verwndet werden
+
+```{r}
+mtcarsDT[, .(Anzahl = .N), 
+         by = .(cyl, am)]
+```
+
+
+## Und jetzt alles auf einmal
+Für alle Fahrzeuge mit mehr als 20 miles per galon, soll gruppiert nach Anzahl 
+Zylinder und Gänge die durchschnittlichen ps und das mittlere Gewicht in kg 
+angegeben werden.
+```{r}
+mtcarsDT[mpg > 20,
+         .(AvgHP = mean(hp),
+           "MinWT(kg)" = min(wt*453.6)),
+         by = .(cyl, under5gears = gear < 5)]
+```
+
+
+## Schnelleres suchen und finden mit *keys*
+
+- *keys* sind ein (oder mehrere) Spalten im Datensatz
+- Der Datensatz wird immer (aufsteigend) nach den *keys* sortiert
+- *keys* müssen _nicht_ eindeutig sein
+```{r}
+setkeyv(mtcarsDT, "cyl")
+head(mtcarsDT)
+```
+
+## Schnelleres suchen und finden mit *keys*
+
+Mit dem Schlüssel kann direkt gefiltert werden:
+
+```{r}
+mtcarsDT[.(6)]
+```
+
+## Schnelleres suchen und finden mit *keys*
+
+Wenn mehrere Schlüssel gesetzt werden, kann man Anfragen kombinieren:
+
+```{r}
+setkeyv(mtcarsDT, c("cyl", "carb"))
+mtcarsDT[.(6, 4)]
+```
+
+## Variablen definieren `:=`
+
+Variablen können direkt in *j* hinzugefügt, geändert oder gelöscht werden:
+```{r, eval=FALSE}
+#neue Variable - Gewicht in Kilo
+mtcarsDT[, wt_kg := wt * 0.4536]
+
+#geänderte Variable - Gewicht mit 2 Komma Stellen
+mtcarsDT[, wt_kg := round(wt_kg, 2)]
+
+#gelöschte Variable - Gewicht in Kilo wieder löschen
+mtcarsDT[, wt_kg := NULL]
+```
+
+
+## Variablen definieren `:=`
+
+_Achtung_: `:=` modifiziert *by reference*, d.h.:
+```{r}
+mtcarsDT[, wt_kg := wt * 45.36]
+```
+Verändert den Datensatz `mtcarsDT`!
+
+Eine Neue Zuweisung über `<-` reicht _nicht_ aus, es muss `copy()` verwendet werden.
+
+
+## Variablen definieren `:=`
+
+Stolperfalle:
+
+```{r}
+ncol(mtcarsDT)
+mtcarsDT2 <- mtcarsDT
+mtcarsDT2[, wt_kg := NULL]
+ncol(mtcarsDT)
+```
+
+*wt_kg* ist auch in `mtcarsDT` verschwunden!
+
+## Variablen definieren `:=`
+```{r}
+mtcarsDT[, wt_kg := wt * 45.36]
+ncol(mtcarsDT)
+mtcarsDT2 <- copy(mtcarsDT)
+mtcarsDT2[, wt_kg := NULL]
+ncol(mtcarsDT)
+```
+
+Dafür benötigt ein referenzierter Datensatz aber auch _keinen_ zusätzlichen Speicher!
+
+
+## Schnelles einlesen mit `fread`
+
+*data.table* liefert die Funktion `fread` um große Datensätze (Tabellen) extrem effizient
+einzulesen. 
+
+Hier keine Benchmarks, aber für Interessierte:
+
+http://stackoverflow.com/questions/1727772/quickly-reading-very-large-tables-as-dataframes-in-r http://www.biostat.jhsph.edu/~rpeng/docs/R-large-tables.html https://stat.ethz.ch/pipermail/r-help/2007-August/138315.html http://www.cerebralmastication.com/2009/11/loading-big-data-into-r/ http://stackoverflow.com/questions/9061736/faster-than-scan-with-rcpp http://stackoverflow.com/questions/415515/how-can-i-read-and-manipulate-csv-file-data-in-c http://stackoverflow.com/questions/9352887/strategies-for-reading-in-csv-files-in-pieces http://stackoverflow.com/questions/11782084/reading-in-large-text-files-in-r http://stackoverflow.com/questions/45972/mmap-vs-reading-blocks http://stackoverflow.com/questions/258091/when-should-i-use-mmap-for-file-access http://stackoverflow.com/a/9818473/403310 http://stackoverflow.com/questions/9608950/reading-huge-files-using-memory-mapped-files ...
+
+
+## Exkurs: Transformieren mit `reshape2`
+
+`reshape2` ist ein Paket zum effizienten umformen von Daten.
+
+Die zwei wichtigsten Funktionen für uns sind `melt` und `dcast`
+
+<br>
+<br>
+*wide format* -> *long format* : `melt`
+
+*long format* -> *wide format* : `dcast`
+
+
+
+
+
+
