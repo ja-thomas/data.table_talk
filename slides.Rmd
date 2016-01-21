@@ -102,6 +102,16 @@ mtcarsDT[mpg > 20,
 
 Implizite Berechnung neuer Variablen, später mehr dazu
 
+## Beispieldatensatz: *mtcars*
+
+Motor Trend Car Road Tests
+
+```{r}
+dim(mtcars)
+ls.str(mtcars)
+```
+
+
 ## Das Gelbe vom *i*
 * Zeile 1 - 3:
     * `mtcars[1:3, ]`
@@ -339,6 +349,17 @@ FULL OUTER    | `merge(X, Y, all = TRUE)`  |  -                 |
 (nötig z.B. bei FULL OUTER JOIN)
 
 
+## Das wichtigste zum Schluss
+
+
+```{r}
+data.table(x = rnorm(1000), y = rnorm(1000))
+
+```
+
+Überladene `print` Funktion für große Datensätze!
+
+
 ## Zusammenfassung
 
 - Zeilen filtern in *i*
@@ -371,6 +392,7 @@ FULL OUTER    | `merge(X, Y, all = TRUE)`  |  -                 |
 
 - `dplyr`: Verwendet chaining Syntax `%>%`
     - https://github.com/lmu-applied-r/2015-dplyr (von Applied R München)
+-  SQL oder noSQL Datenbank (extern)
 - ...
 - Kaffee trinken
 - ...

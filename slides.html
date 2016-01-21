@@ -215,6 +215,28 @@ mtcarsDT[mpg &gt; 20,
 
 <p>Implizite Berechnung neuer Variablen, später mehr dazu</p>
 
+</article></slide><slide class=''><hgroup><h2>Beispieldatensatz: <em>mtcars</em></h2></hgroup><article  id="beispieldatensatz-mtcars">
+
+<p>Motor Trend Car Road Tests</p>
+
+<pre class = 'prettyprint lang-r'>dim(mtcars)</pre>
+
+<pre >## [1] 32 11</pre>
+
+<pre class = 'prettyprint lang-r'>ls.str(mtcars)</pre>
+
+<pre >## am :  num [1:32] 1 1 1 0 0 0 0 0 0 0 ...
+## carb :  num [1:32] 4 4 1 1 2 1 4 2 2 4 ...
+## cyl :  num [1:32] 6 6 4 6 8 6 8 4 4 6 ...
+## disp :  num [1:32] 160 160 108 258 360 ...
+## drat :  num [1:32] 3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+## gear :  num [1:32] 4 4 4 3 3 3 3 4 4 4 ...
+## hp :  num [1:32] 110 110 93 110 175 105 245 62 95 123 ...
+## mpg :  num [1:32] 21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+## qsec :  num [1:32] 16.5 17 18.6 19.4 17 ...
+## vs :  num [1:32] 0 0 1 1 0 1 0 1 1 1 ...
+## wt :  num [1:32] 2.62 2.88 2.32 3.21 3.44 ...</pre>
+
 </article></slide><slide class=''><hgroup><h2>Das Gelbe vom <em>i</em></h2></hgroup><article  id="das-gelbe-vom-i">
 
 <ul>
@@ -456,9 +478,9 @@ ncol(mtcarsDT)</pre>
 wd</pre>
 
 <pre >##   person gewicht groesse
-## 1      1      80     185
-## 2      2      81     172
-## 3      3      70     178</pre>
+## 1      1      76     176
+## 2      2      81     168
+## 3      3      67     189</pre>
 
 <p><code>wd</code> ist im <em>wide</em> Format!</p>
 
@@ -468,12 +490,12 @@ wd</pre>
 wd_long</pre>
 
 <pre >##   person variable value
-## 1      1  gewicht    80
+## 1      1  gewicht    76
 ## 2      2  gewicht    81
-## 3      3  gewicht    70
-## 4      1  groesse   185
-## 5      2  groesse   172
-## 6      3  groesse   178</pre>
+## 3      3  gewicht    67
+## 4      1  groesse   176
+## 5      2  groesse   168
+## 6      3  groesse   189</pre>
 
 <p>Die Spalte <em>variable</em> kann auch mit <code>variable.name =</code> direkt anders benannt werden.</p>
 
@@ -483,9 +505,9 @@ wd_long</pre>
 wd_wide</pre>
 
 <pre >##   person gewicht groesse
-## 1      1      80     185
-## 2      2      81     172
-## 3      3      70     178</pre>
+## 1      1      76     176
+## 2      2      81     168
+## 3      3      67     189</pre>
 
 <pre class = 'prettyprint lang-r'>all.equal(wd_wide, wd)</pre>
 
@@ -534,6 +556,25 @@ wd_wide</pre>
 <p><br> <code>merge()</code> Funktioniert auch für <em>data.table</em></p>
 
 <p>(nötig z.B. bei FULL OUTER JOIN)</p>
+
+</article></slide><slide class=''><hgroup><h2>Das wichtigste zum Schluss</h2></hgroup><article  id="das-wichtigste-zum-schluss">
+
+<pre class = 'prettyprint lang-r'>data.table(x = rnorm(1000), y = rnorm(1000))</pre>
+
+<pre >##                x           y
+##    1:  0.5047895  0.20187626
+##    2: -0.7472019  0.86913499
+##    3: -0.6940724 -1.29891557
+##    4:  1.6362029 -1.57012791
+##    5: -1.1450472 -0.99624289
+##   ---                       
+##  996: -0.2180392  0.05078202
+##  997:  1.2989994  0.23066329
+##  998: -0.0933689  0.46923650
+##  999:  1.2476438  1.73824822
+## 1000:  0.7248333 -1.11704933</pre>
+
+<p>Überladene <code>print</code> Funktion für große Datensätze!</p>
 
 </article></slide><slide class=''><hgroup><h2>Zusammenfassung</h2></hgroup><article  id="zusammenfassung">
 
@@ -591,6 +632,7 @@ wd_wide</pre>
 <ul>
 <li><a href='https://github.com/lmu-applied-r/2015-dplyr' title=''>https://github.com/lmu-applied-r/2015-dplyr</a> (von Applied R München)</li>
 </ul></li>
+<li>SQL oder noSQL Datenbank (extern)</li>
 <li>&#8230;</li>
 <li>Kaffee trinken</li>
 <li>&#8230;</li>
