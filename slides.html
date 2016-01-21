@@ -478,9 +478,9 @@ ncol(mtcarsDT)</pre>
 wd</pre>
 
 <pre >##   person gewicht groesse
-## 1      1      76     176
-## 2      2      81     168
-## 3      3      67     189</pre>
+## 1      1      69     167
+## 2      2      82     173
+## 3      3      77     187</pre>
 
 <p><code>wd</code> ist im <em>wide</em> Format!</p>
 
@@ -490,12 +490,12 @@ wd</pre>
 wd_long</pre>
 
 <pre >##   person variable value
-## 1      1  gewicht    76
-## 2      2  gewicht    81
-## 3      3  gewicht    67
-## 4      1  groesse   176
-## 5      2  groesse   168
-## 6      3  groesse   189</pre>
+## 1      1  gewicht    69
+## 2      2  gewicht    82
+## 3      3  gewicht    77
+## 4      1  groesse   167
+## 5      2  groesse   173
+## 6      3  groesse   187</pre>
 
 <p>Die Spalte <em>variable</em> kann auch mit <code>variable.name =</code> direkt anders benannt werden.</p>
 
@@ -505,9 +505,9 @@ wd_long</pre>
 wd_wide</pre>
 
 <pre >##   person gewicht groesse
-## 1      1      76     176
-## 2      2      81     168
-## 3      3      67     189</pre>
+## 1      1      69     167
+## 2      2      82     173
+## 3      3      77     187</pre>
 
 <pre class = 'prettyprint lang-r'>all.equal(wd_wide, wd)</pre>
 
@@ -561,18 +561,18 @@ wd_wide</pre>
 
 <pre class = 'prettyprint lang-r'>data.table(x = rnorm(1000), y = rnorm(1000))</pre>
 
-<pre >##                x           y
-##    1:  0.5047895  0.20187626
-##    2: -0.7472019  0.86913499
-##    3: -0.6940724 -1.29891557
-##    4:  1.6362029 -1.57012791
-##    5: -1.1450472 -0.99624289
-##   ---                       
-##  996: -0.2180392  0.05078202
-##  997:  1.2989994  0.23066329
-##  998: -0.0933689  0.46923650
-##  999:  1.2476438  1.73824822
-## 1000:  0.7248333 -1.11704933</pre>
+<pre >##                 x            y
+##    1:  0.46415868  0.360111003
+##    2:  0.54989832 -0.839365502
+##    3: -0.06125131 -1.502301744
+##    4: -1.14067795  2.276631173
+##    5: -0.87681387  0.794319945
+##   ---                         
+##  996:  0.71039690  1.124448314
+##  997:  0.58281744 -0.670967891
+##  998:  1.85128242 -0.772898521
+##  999:  0.05066844  0.993159962
+## 1000:  0.58248588  0.005554499</pre>
 
 <p>Überladene <code>print</code> Funktion für große Datensätze!</p>
 
@@ -633,11 +633,16 @@ wd_wide</pre>
 <li><a href='https://github.com/lmu-applied-r/2015-dplyr' title=''>https://github.com/lmu-applied-r/2015-dplyr</a> (von Applied R München)</li>
 </ul></li>
 <li>SQL oder noSQL Datenbank (extern)</li>
+<li>Kommerzielle R Versionen: Revolution R / Microsoft R</li>
 <li>&#8230;</li>
 <li>Kaffee trinken</li>
 <li>&#8230;</li>
 <li>Vorschläge?</li>
-</ul></article></slide>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>Fragen?</h2></hgroup><article  id="fragen">
+
+<p><br> <br> Vielen Dank für Eure Aufmerksamkeit <br> <br> <br> Fragen? Meinungen? Anregungen?</p></article></slide>
 
 
   <slide class="backdrop"></slide>

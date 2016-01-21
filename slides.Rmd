@@ -393,7 +393,20 @@ data.table(x = rnorm(1000), y = rnorm(1000))
 - `dplyr`: Verwendet chaining Syntax `%>%`
     - https://github.com/lmu-applied-r/2015-dplyr (von Applied R München)
 -  SQL oder noSQL Datenbank (extern)
+- Kommerzielle R Versionen: Revolution R / Microsoft R
 - ...
 - Kaffee trinken
 - ...
 - Vorschläge?    
+
+## Fragen?
+
+<br>
+<br>
+Vielen Dank für Eure Aufmerksamkeit
+<br>
+<br>
+<br>
+Fragen? Meinungen? Anregungen?
+
+
